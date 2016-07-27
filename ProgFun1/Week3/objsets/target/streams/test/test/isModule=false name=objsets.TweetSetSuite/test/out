@@ -1,0 +1,8 @@
+[info] TweetSetSuite:
+[info] - filter: on empty set
+[info] - filter: a on set5
+[info] - filter: 20 on set5
+[info] - union: set4c and set4d
+[info] - union: with empty set (1)
+[info] - union: with empty set (2)
+[info] - descending: set5

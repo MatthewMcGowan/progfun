@@ -1,0 +1,12 @@
+compile
+test
+submit mattmcgowan1989@hotmail.com P7M25N0ECW0LukT6
+compile
+submit mattmcgowan1989@hotmail.com 4j6y68TierMwwudv
+compile
+test
+run
+submit mattmcgowan1989@hotmail.com     val mostRetweetedChild = children.mostRetweeted
+    if (elem.retweets > mostRetweetedChild.retweets) elem else mostRetweetedChild
+submit mattmcgowan1989@hotmail.com 4j6y68TierMwwudv
+exit
