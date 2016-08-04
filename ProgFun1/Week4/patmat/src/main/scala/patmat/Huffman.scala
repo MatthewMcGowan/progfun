@@ -132,7 +132,7 @@ object Huffman {
     */
   def until(comparator: List[CodeTree] => Boolean, operation: List[CodeTree] => List[CodeTree])(trees: List[CodeTree])
   : List[CodeTree] = {
-    if (!comparator(trees)) until(comparator, operation)(trees)
+    if (!comparator(trees)) until(comparator, operation)(operation(trees))
     else trees
   }
 
