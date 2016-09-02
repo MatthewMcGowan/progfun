@@ -195,17 +195,6 @@ object Huffman {
     * into a sequence of bits.
     */
   def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
-//    def accumulator(tree: CodeTree, char: Char, acc: List[Bit]): List[Bit] =
-//      tree match {
-//        case Leaf(c, _) => acc
-//        case Fork(l, r, _, _) => {
-//          if (chars(l).contains(char)) accumulator(l, char, acc :+ 0)
-//          else accumulator(r, char, acc :+ 1)
-//        }
-//      }
-//    text.foldLeft(List[Bit]())((encoded, char) => accumulator(tree, char, encoded))
-
-
     def branch(b: Bit, t: Fork) : CodeTree = {
       if (b == 0) t.left
       else t.right
