@@ -76,8 +76,12 @@ object Huffman {
     * println("integer is  : "+ theInt)
     * }
     */
-  def times(chars: List[Char]): List[(Char, Int)] = chars.distinct map {
-    char => (char, chars.count(_ == char))
+  def times(chars: List[Char]): List[(Char, Int)] = {
+    def charCount(c: Char): (Char, Int) = {
+      (c, chars.count(_ == c))
+    }
+
+    chars.distinct map charCount
   }
 
   /**
