@@ -43,17 +43,62 @@ class BloxorzSuite extends FunSuite {
   }
 
 
-	test("terrain function level 1") {
+	test("terrain function level 1, 1") {
     new Level1 {
       assert(terrain(Pos(0,0)), "0,0")
+    }
+  }
+
+  test("terrain function level 1, 2") {
+    new Level1 {
       assert(terrain(Pos(1,1)), "1,1") // start
+    }
+  }
+
+  test("terrain function level 1, 3") {
+    new Level1 {
       assert(terrain(Pos(4,7)), "4,7") // goal
+    }
+  }
+
+  test("terrain function level 1, 4") {
+    new Level1 {
       assert(terrain(Pos(5,8)), "5,8")
+    }
+  }
+
+  test("terrain function level 1, 5") {
+    new Level1 {
       assert(!terrain(Pos(5,9)), "5,9")
+    }
+  }
+
+  test("terrain function level 1, 6") {
+    new Level1 {
       assert(terrain(Pos(4,9)), "4,9")
+    }
+  }
+
+  test("terrain function level 1, 7") {
+    new Level1 {
       assert(!terrain(Pos(6,8)), "6,8")
+    }
+  }
+
+  test("terrain function level 1, 8") {
+    new Level1 {
       assert(!terrain(Pos(4,11)), "4,11")
+    }
+  }
+
+  test("terrain function level 1, 9") {
+    new Level1 {
       assert(!terrain(Pos(-1,0)), "-1,0")
+    }
+  }
+
+  test("terrain function level 1, 10") {
+    new Level1 {
       assert(!terrain(Pos(0,-1)), "0,-1")
     }
   }
@@ -78,4 +123,22 @@ class BloxorzSuite extends FunSuite {
     }
   }
 
+  test("newNeighborsOnly does not result in duplicates") {
+    new Level1 {
+      val result = newNeighborsOnly(
+        Set(
+          (Block(Pos(1,2),Pos(1,3)), List(Right,Left,Up)),
+          (Block(Pos(2,1),Pos(3,1)), List(Down,Left,Up))
+        ).toStream,
+
+        Set(Block(Pos(1,2),Pos(1,3)), Block(Pos(1,1),Pos(1,1)))
+      )
+
+      val expected = Set(
+        (Block(Pos(2,1),Pos(3,1)), List(Down,Left,Up))
+      ).toStream
+
+      assert(result == expected)
+    }
+  }
 }
