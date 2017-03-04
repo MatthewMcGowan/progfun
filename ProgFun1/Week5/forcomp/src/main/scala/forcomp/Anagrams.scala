@@ -35,9 +35,9 @@ object Anagrams {
    *  Note: you must use `groupBy` to implement this method!
    */
   def wordOccurrences(w: Word): Occurrences = {
-    def normalise(w: Word): Array[Char] = w.toLowerCase.toCharArray
+    def normalise(w: Word) = w.toLowerCase.toCharArray
 
-    normalise(w).groupBy(w => w).mapValues(_.size).toList.sorted
+    normalise(w).groupBy(c => c).mapValues(_.size).toList.sorted
   };
 
   /** Converts a sentence into its character occurrence list. */
@@ -153,7 +153,7 @@ object Anagrams {
         sentence <- acc(subtract(o, s))
       } yield word :: sentence
     }
-    
+
     acc(sentenceOccurrences(sentence))
   }
 }
