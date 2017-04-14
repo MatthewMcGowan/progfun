@@ -20,7 +20,7 @@ object Polynomial {
       if(delta() < 0) Set[Double]()
       else Set(sol(add), sol(sub))
     }
-    
+
     Signal(solutions(a, b, delta))
   }
 }
