@@ -55,31 +55,36 @@ object ParallelParenthesesBalancing {
 
   /** Returns `true` iff the parentheses in the input `chars` are balanced.
    */
+  //TODO: Clear up this mess...
   def parBalance(chars: Array[Char], threshold: Int): Boolean = {
     @tailrec
-    def traverse(idx: Int, until: Int, closeParens: Int, openParens: Int): (Int, Int) /*: ???*/ = {
-      if (idx == until) (closeParens, openParens)
-      else if (chars(idx) == ')') traverse(idx - 1, until, closeParens + 1, openParens)
-      else if (chars(idx) == '(') traverse(idx - 1, until, closeParens, openParens + 1)
-      else traverse(idx - 1, until, closeParens, openParens)
+    def traverse(idx: Int, until: Int, openParens: Int, closeParens: Int): (Int, Int) /*: ???*/ = {
+      if (idx == until) (openParens, closeParens)
+      else if (chars(idx) == ')') {
+        if (openParens > 0) traverse(idx + 1, until, openParens - 1, closeParens)
+        else traverse(idx + 1, until, openParens, closeParens + 1)
+      }
+      else if (chars(idx) == '(') traverse(idx + 1, until, openParens + 1, closeParens)
+      else traverse(idx + 1, until, openParens, closeParens)
     }
 
     def reduce(from: Int, until: Int): (Int, Int)/*: ???*/ = {
       val interval = until - from
+      val halfInterval = interval / 2
 
       def parrallelise(interval: Int): (Int, Int) = {
         val (a, b) = parallel(
-          reduce(from, interval / 2),
-          reduce(until - (interval / 2), until))
+          reduce(from, from + halfInterval),
+          reduce(until - halfInterval, until))
 
-        val cancellingParens = math.min(a._2, b._1)
-        val closed = a._1 + (b._1 - cancellingParens)
-        val open = b._2 + (a._2 - cancellingParens)
+        val cancellingParens = math.min(a._1, b._2)
+        val open = b._1 + (a._1 - cancellingParens)
+        val closed = a._2 + (b._2 - cancellingParens)
 
-        (closed, open)
+        (open, closed)
       }
 
-      if (interval < threshold) traverse(from, until, 0, 0)
+      if (interval <= threshold) traverse(from, until, 0, 0)
       else parrallelise(interval)
     }
 
