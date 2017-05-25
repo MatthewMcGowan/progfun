@@ -24,3 +24,6 @@ out
 
 # OS-X
 .DS_Store
+
+# Spark course big data file
+wikipedia.dat
