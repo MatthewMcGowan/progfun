@@ -78,7 +78,9 @@ class StackOverflow extends Serializable {
 
   /** Group the questions and answers together */
   def groupedPostings(postings: RDD[Posting]): RDD[(Int, Iterable[(Posting, Posting)])] = {
-    ???
+    val questions = postings.filter(_.postingType == 1).map(q => (q.id, q))
+    val answers = postings.filter(_.postingType == 2).map(a => (a.parentId.get, a))
+    questions.join(answers).groupByKey()
   }
 
 
@@ -97,7 +99,10 @@ class StackOverflow extends Serializable {
       highScore
     }
 
-    ???
+    grouped map { g =>
+      val q = g._2
+      (q.head._1, answerHighScore(q.map(_._2).toArray))
+    }
   }
 
 
@@ -117,7 +122,12 @@ class StackOverflow extends Serializable {
       }
     }
 
-    ???
+    scored map { s =>
+      val posting = s._1
+      val highScore = s._2
+      val index = firstLangInTag(posting.tags, langs).get
+      (index * langSpread, highScore)
+    } persist()
   }
 
 
@@ -175,6 +185,14 @@ class StackOverflow extends Serializable {
     val newMeans = means.clone() // you need to compute newMeans
 
     // TODO: Fill in the newMeans array
+    val closestMeans: RDD[(Int, Iterable[(Int, Int)])] = vectors groupBy (pair => findClosest(pair, means))
+
+    closestMeans map {
+      case (index, vector: Iterable[(Int, Int)]) => (index, averageVectors(vector))
+    } collect() foreach {
+      case (index, coordinates) => newMeans(index) = coordinates
+    }
+
     val distance = euclideanDistance(means, newMeans)
 
     if (debug) {
@@ -273,10 +291,19 @@ class StackOverflow extends Serializable {
     val closestGrouped = closest.groupByKey()
 
     val median = closestGrouped.mapValues { vs =>
-      val langLabel: String   = ??? // most common language in the cluster
-      val langPercent: Double = ??? // percent of the questions in the most common language
-      val clusterSize: Int    = ???
-      val medianScore: Int    = ???
+      val max = vs.groupBy(_._1).maxBy(_._2.size)
+
+      val langLabel: String   = langs(max._1 / langSpread)
+      val langPercent: Double = max._2.size * 100d / vs.size
+      val clusterSize: Int    = vs.size
+      val medianScore: Int    = {
+        val length = vs.size
+        val v = vs.map(_._2)toArray
+        val (lower, upper) = v sortWith (_<_) splitAt (length / 2)
+        if (length % 2 == 0)
+          (lower.last + upper.head) / 2
+        else upper.head
+      }
 
       (langLabel, langPercent, clusterSize, medianScore)
     }
